@@ -18,12 +18,12 @@ COPY . /build/
 RUN make build-binary
 
 FROM --platform=$TARGETPLATFORM busybox
-LABEL maintainer="Robert Jacob <xperimental@solidproject.de>"
+LABEL maintainer="Marcel Bankmann <adsci81@gmail.com>"
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=builder /build/flowercare-exporter /bin/flowercare-exporter
+COPY --from=builder /build/flowercare-json-exporter /bin/flowercare-json-exporter
 
 USER nobody
 EXPOSE 9294
 
-ENTRYPOINT ["/bin/flowercare-exporter"]
+ENTRYPOINT ["/bin/flowercare-json-exporter"]

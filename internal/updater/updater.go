@@ -10,9 +10,9 @@ import (
 
 	"github.com/go-ble/ble"
 	"github.com/go-ble/ble/linux"
+	"github.com/marcelb/flowercare-json-exporter/internal/config"
+	"github.com/marcelb/flowercare-json-exporter/pkg/miflora"
 	"github.com/sirupsen/logrus"
-	"github.com/xperimental/flowercare-exporter/internal/config"
-	"github.com/xperimental/flowercare-exporter/pkg/miflora"
 )
 
 var (
