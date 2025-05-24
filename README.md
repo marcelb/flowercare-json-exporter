@@ -1,6 +1,8 @@
 # flowercare-json-exporter
 
 A server that reads data from Xiaomi MiFlora / HHCC Flower Care devices using Bluetooth and exposes it as JSON.
+It was originally written by xperimental at [github.com/xperimental/flowercare-exporter](https://github.com/xperimental/flowercare-exporter), but then ultimately changed here to return JSON instead of Prometheus metrics.
+Thanks a lot of the original project.
 
 ## Installation
 
