@@ -32,3 +32,24 @@ All sensors can optionally have a "name" assigned to them, so they are more easi
 ```bash
 ./flowercare-json-exporter -s tomatoes=AA:BB:CC:DD:EE:FF
 ```
+### Example docker compose file
+```yaml
+services:
+  flowercare-json-exporter:
+    image: flowercare-json-exporter:dev
+    container_name: flowercare-json-exporter
+    restart: unless-stopped
+    privileged: true
+    command:
+      - "-r"
+      - "2m"
+      - "-i"
+      - "hci0"
+      - "-s"
+      - "plant1=00:11:22:33:44:55"
+    devices:
+      - /dev/hci0
+    network_mode: host
+    environment:
+      - TZ=Europe/Berlin
+```

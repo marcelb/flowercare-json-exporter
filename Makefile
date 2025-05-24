@@ -6,7 +6,7 @@ GIT_VERSION := $(shell git describe --tags --dirty)
 VERSION := $(GIT_VERSION:v%=%)
 GIT_COMMIT := $(shell git rev-parse HEAD)
 DATE := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-DOCKER_REPO ?= ghcr.io/marcelb/flowercare-json-exporter
+DOCKER_REPO ?= flowercare-json-exporter
 DOCKER_TAG ?= dev
 
 all: test build-binary

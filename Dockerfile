@@ -23,7 +23,7 @@ LABEL maintainer="Marcel Bankmann <adsci81@gmail.com>"
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /build/flowercare-json-exporter /bin/flowercare-json-exporter
 
-USER nobody
+USER root
 EXPOSE 9294
 
 ENTRYPOINT ["/bin/flowercare-json-exporter"]
