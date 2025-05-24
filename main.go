@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"os"
 	"os/signal"
@@ -9,12 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/marcelb/flowercare-json-exporter/internal/collector"
+	"github.com/marcelb/flowercare-json-exporter/internal/config"
+	"github.com/marcelb/flowercare-json-exporter/internal/updater"
 	"github.com/sirupsen/logrus"
-	"github.com/xperimental/flowercare-exporter/internal/collector"
-	"github.com/xperimental/flowercare-exporter/internal/config"
-	"github.com/xperimental/flowercare-exporter/internal/updater"
 )
 
 var (
@@ -28,10 +27,6 @@ var (
 		ExitFunc:     os.Exit,
 		ReportCaller: false,
 	}
-
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
 )
 
 func main() {
@@ -59,24 +54,9 @@ func main() {
 		Sensors:       config.Sensors,
 		StaleDuration: config.StaleDuration,
 	}
-	if err := prometheus.Register(c); err != nil {
-		log.Fatalf("Failed to register collector: %s", err)
-	}
 
-	versionMetric := prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: collector.MetricPrefix + "build_info",
-		Help: "Contains build information as labels. Value set to 1.",
-		ConstLabels: prometheus.Labels{
-			"version": version,
-			"commit":  commit,
-			"date":    date,
-		},
-	})
-	versionMetric.Set(1)
-	prometheus.MustRegister(versionMetric)
-
-	http.Handle("/metrics", promhttp.Handler())
-	http.Handle("/", http.RedirectHandler("/metrics", http.StatusFound))
+	http.HandleFunc("/sensors", sensorsJSONHandler(c, log))
+	http.Handle("/", http.RedirectHandler("/sensors", http.StatusFound))
 
 	go func() {
 		log.Infof("Listen on %s...", config.ListenAddr)
@@ -93,6 +73,23 @@ func main() {
 	log.Info("Exporter is started.")
 	wg.Wait()
 	log.Info("Shutdown complete.")
+}
+
+func sensorsJSONHandler(c *collector.Flowercare, log *logrus.Logger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		data := c.CollectDataAsStructs()
+		jsonData, err := json.Marshal(data)
+		if err != nil {
+			log.Errorf("Failed to marshal data to JSON: %s", err)
+			http.Error(w, "Failed to marshal data to JSON", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if _, err := w.Write(jsonData); err != nil {
+			log.Errorf("Failed to write JSON response: %s", err)
+		}
+	}
 }
 
 func startSignalHandler(ctx context.Context, wg *sync.WaitGroup, cancel func()) {
