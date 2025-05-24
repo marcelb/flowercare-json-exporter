@@ -18,7 +18,7 @@ COPY . /build/
 RUN make build-binary
 
 FROM --platform=$TARGETPLATFORM busybox
-LABEL maintainer="Marcel Bankmann <nevermoar81@gmail.com>"
+LABEL maintainer="Marcel Bankmann <adsci81@gmail.com>"
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /build/flowercare-json-exporter /bin/flowercare-json-exporter
