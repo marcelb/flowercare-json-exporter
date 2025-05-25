@@ -19,10 +19,16 @@ go build .
 ```plain
 $ flowercare-json-exporter -h
 Usage of ./flowercare-json-exporter:
-  -i, --adapter string            Bluetooth device to use for communication. (default "hci0")
-  -a, --addr string               Address to listen on for connections. (default ":9294")
-  -c, --cache-duration duration   Interval during which the results from the Bluetooth device are cached. (default 2m0s)
-  -s, --sensor address            MAC-address of sensor to collect data from. Can be specified multiple times.
+  -i, --adapter string                Bluetooth device to use for communication. (default "hci0")
+  -a, --addr string                   Address to listen on for connections. (default ":9294")
+      --log-level level               Minimum log level to show. (default info)
+  -r, --refresh-duration duration     Interval used for refreshing data from bluetooth devices. (default 2m0s)
+      --refresh-timeout duration      Timeout for reading data from a sensor. (default 1m0s)
+      --retry-factor float            Factor used to multiply wait time for subsequent retries. (default 2)
+      --retry-max-duration duration   Maximum wait time between retries on error. (default 30m0s)
+      --retry-min-duration duration   Minimum wait time between retries on error. (default 30s)
+  -s, --sensor address                MAC-address of sensor to collect data from. Can be specified multiple times.
+      --stale-duration duration       Duration after which data is considered stale and is not used for metrics anymore. (default 5m0s)
 ```
 
 After starting, the server will offer the sensor data as JSON on the `/sensors` endpoint.

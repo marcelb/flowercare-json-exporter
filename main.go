@@ -86,6 +86,7 @@ func sensorsJSONHandler(c *collector.Flowercare, log *logrus.Logger) http.Handle
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		if _, err := w.Write(jsonData); err != nil {
 			log.Errorf("Failed to write JSON response: %s", err)
 		}
