@@ -42,13 +42,7 @@ services:
     container_name: flowercare-json-exporter
     restart: unless-stopped
     privileged: true
-    command:
-      - "-r"
-      - "2m"
-      - "-i"
-      - "hci0"
-      - "-s"
-      - "plant1=00:11:22:33:44:55"
+    command: -r 2m -i hci0 -s plant1=00:11:22:33:44:55
     devices:
       - /dev/hci0
     network_mode: host
