@@ -22,11 +22,6 @@ type SensorData struct {
 	Up                  bool    `json:"up"`
 }
 
-const (
-	// Conversion factor from µS/cm to S/m
-	factorConductivity = 0.0001
-)
-
 // Flowercare retrieves data from Miflora sensors.
 type Flowercare struct {
 	Log           logrus.FieldLogger
@@ -62,7 +57,7 @@ func (c *Flowercare) CollectDataAsStructs() []SensorData {
 			c.Log.Debugf("Data for %q is stale: %s > %s", s, age, c.StaleDuration)
 		} else {
 			sensorResult.BatteryPercent = float64(data.Firmware.Battery)
-			sensorResult.ConductivitySM = float64(data.Sensors.Conductivity) * factorConductivity
+			sensorResult.ConductivitySM = float64(data.Sensors.Conductivity)
 			sensorResult.BrightnessLux = float64(data.Sensors.Light)
 			sensorResult.MoisturePercent = float64(data.Sensors.Moisture)
 			sensorResult.TemperatureCelsius = data.Sensors.Temperature
