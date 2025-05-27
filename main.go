@@ -55,7 +55,8 @@ func main() {
 		StaleDuration: config.StaleDuration,
 	}
 
-	http.HandleFunc("/sensors", sensorsJSONHandler(c, log))
+	http.HandleFunc("/sensors", sensorsJSONHandler(c, log, provider))
+	http.HandleFunc("/forceUpdate", forceUpdateHandler(log, provider))
 	http.Handle("/", http.RedirectHandler("/sensors", http.StatusFound))
 
 	go func() {
@@ -75,7 +76,7 @@ func main() {
 	log.Info("Shutdown complete.")
 }
 
-func sensorsJSONHandler(c *collector.Flowercare, log *logrus.Logger) http.HandlerFunc {
+func sensorsJSONHandler(c *collector.Flowercare, log *logrus.Logger, provider *updater.Updater) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := c.CollectDataAsStructs()
 		jsonData, err := json.Marshal(data)
@@ -90,6 +91,13 @@ func sensorsJSONHandler(c *collector.Flowercare, log *logrus.Logger) http.Handle
 		if _, err := w.Write(jsonData); err != nil {
 			log.Errorf("Failed to write JSON response: %s", err)
 		}
+	}
+}
+
+func forceUpdateHandler(log *logrus.Logger, provider *updater.Updater) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Info("Force trigger detected, forcing data refresh.")
+		provider.UpdateAll(time.Now())
 	}
 }
 
