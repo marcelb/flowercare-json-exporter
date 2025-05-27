@@ -98,6 +98,21 @@ func forceUpdateHandler(log *logrus.Logger, provider *updater.Updater) http.Hand
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Info("Force trigger detected, forcing data refresh.")
 		provider.UpdateAll(time.Now())
+
+		response := map[string]string{"result": "ok"}
+		jsonResponse, err := json.Marshal(response)
+
+		if err != nil {
+			log.Errorf("Failed to marshal data to JSON: %s", err)
+			http.Error(w, "Failed to marshal data to JSON", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		if _, err := w.Write(jsonResponse); err != nil {
+			log.Errorf("Failed to write JSON response: %s", err)
+		}
 	}
 }
 
